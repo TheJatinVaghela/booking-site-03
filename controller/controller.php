@@ -55,7 +55,7 @@ class controller extends model{
                 break;
             };
             $this->user_info = $this->get_user("account",$_COOKIE["user_id"],"user_id");
-            $this->print_stuf($this->user_info);
+            // $this->print_stuf($this->user_info);
             if(isset($_REQUEST["delete_ac"])){
                 $answer = $this->delete("account",$this->user_info["user_id"],"user_id",);
                 // $this->print_stuf($answer);
@@ -85,6 +85,7 @@ class controller extends model{
         }
 
         case "/movie-seats":{
+
             if(!isset($_REQUEST["movie_id"])){
                 $this->print_stuf(
                     "<h2>no movie selected <a style='color:blue;' href='http://localhost/clones/booking-site-03/all-movies-list' >click here</a> to select a movie</h2>"
@@ -121,14 +122,15 @@ class controller extends model{
                 // $this->print_stuf($seat_selected_arr);
                 $chack_movie_datetime_answer = $this->chack_movie_id_datetime("movie_list",$this->movie_id,$datetime);
                 if($chack_movie_datetime_answer !== false){
-                   $this->print_stuf($chack_movie_datetime_answer);
+                //    $this->print_stuf($chack_movie_datetime_answer);
                    $chack_seat_empty_answer = $this->chack_seat_empty("seats",$chack_movie_datetime_answer["datetime_value"],$seat_selected_arr);
-                   $this->print_stuf($chack_seat_empty_answer);
+                //    $this->print_stuf($chack_seat_empty_answer);
                    if($chack_seat_empty_answer !== false){
                         $this->Add_chack_bookedseat_toUser("account","bookedseat","user_id",$this->movie_id,$datetime,$seat_selected_arr);
                    }else if($chack_seat_empty_answer == false){
   
-                      $this->print_stuf([$_REQUEST,"seat teken"]);
+                    //   $this->print_stuf([$_REQUEST,"seat teken"]);
+                      echo "<h3 style='margin-top:5rem;'>SORRY BUT YOUR LATE THAT SEAT HAS BEEN BOOKED</h3>";
                    }  
                 }
             };

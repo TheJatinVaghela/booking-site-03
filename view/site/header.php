@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <!-- <?php print_r($this->user_info)?> -->
+    <?php //print_r($this->user_info)?>
     <!-- ==========Preloader========== -->
     <!-- <div class="preloader">
         <div class="preloader-inner">

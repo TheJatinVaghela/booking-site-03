@@ -20,7 +20,7 @@ class model {
 
     }
 
-    protected function connect_to_server($hostname= "localhost",$directri= "root",$data_base= "booking-3",$pass= "" ){
+    protected function connect_to_server($hostname= "localhost",$directri= "root",$data_base= "booking-2",$pass= "" ){
         try {
             $new_connection = new mysqli($hostname,$directri,$pass,$data_base);
             $this->connection = $new_connection;
@@ -75,7 +75,7 @@ class model {
             $sql = substr($sql,0,-1);
             $sql .= ")";
             $sqli = $this->connection->query($sql);
-            $this->print_stuf($sqli);
+            // $this->print_stuf($sqli);
             if($sqli == 1){
                 return true;
             }else{
@@ -133,15 +133,15 @@ class model {
             // exit();
         };
         $key = trim($key);
-        $this->print_stuf($key);
+        // $this->print_stuf($key);
         $sql = "SELECT `seat`,`$key` FROM $table WHERE `$key`= 1"; // ( ` ) = 🟢 | ( ' ) = 🔴
-        $this->print_stuf($sql);
+        // $this->print_stuf($sql);
         // exit();
         $sqlex = $this->connection->query($sql);
-        $this->print_stuf($sqlex);
+        // $this->print_stuf($sqlex);
         if ($sqlex->num_rows > 0) {
             $data = $this->jatin_fetch_All($sqlex);
-            $this->print_stuf($data);
+            // $this->print_stuf($data);
             return $data; 
         };
         return "No"; 
@@ -167,15 +167,15 @@ class model {
         $datetime_name = $key;
         $sql = "SELECT `seat`,`$key` FROM $table WHERE `$key`= 1"; // ( ` ) = 🟢 | ( ' ) = 🔴
         $sqlex = $this->connection->query($sql);
-         $this->print_stuf($sqlex);
+        //  $this->print_stuf($sqlex);
         //   exit();
         if ($sqlex->num_rows > 0) {
             $data = $sqlex->fetch_all();
             $arr=false;
             foreach($data as $key => $value){
                 if(isset($seat_arr[$value[0]]) && $seat_arr[$value[0]] == 'yes'){
-                    $this->print_stuf($seat_arr['G-0']);
-                      echo "0";
+                    // $this->print_stuf($seat_arr['G-0']);
+                    //   echo "0";
                       $arr=true;
                     //  exit();
                     return false; 
@@ -189,9 +189,9 @@ class model {
             $sql = substr($sql,0,-1);
             $sql .= ");";
             $sqlex = $this->connection->query($sql);
-            $this->print_stuf($sqlex);
+            // $this->print_stuf($sqlex);
             if ($sqlex == 1) {
-                echo "1";
+                // echo "1";
                     // exit();
                     return true;
             };
@@ -204,9 +204,9 @@ class model {
             $sql = substr($sql,0,-1);
             $sql .= ");";
             $sqlex = $this->connection->query($sql);
-            $this->print_stuf($sqlex);
+            // $this->print_stuf($sqlex);
             if ($sqlex == 1) {
-                echo "1";
+                // echo "1";
                     // exit();
                     return true;
             };
@@ -219,7 +219,7 @@ class model {
 
     protected function Add_chack_bookedseat_toUser($table,$_1key,$_2key,$movie_id,$datetime,$seat_chacked_arr){
         $sql = "SELECT $_1key FROM $table where $_2key = $_COOKIE[user_id]";
-        $this->print_stuf([$_COOKIE["user_info"],$table,$_1key,$_2key,$movie_id,$datetime,$seat_chacked_arr]);
+        // $this->print_stuf([$_COOKIE["user_info"],$table,$_1key,$_2key,$movie_id,$datetime,$seat_chacked_arr]);
         $sqlex = $this->connection->query($sql);
         if($sqlex->num_rows > 0){
            $data = $sqlex->fetch_object();
@@ -238,7 +238,7 @@ class model {
                $pre_bockedSeat = ltrim($pre_bockedSeat[1],"[");
                $pre_bockedSeat = rtrim($pre_bockedSeat,"]");
                //  $this->print_stuf($pre_bockedSeat);
-               $this->print_stuf($pre_query);
+            //    $this->print_stuf($pre_query);
             };
         }
         if($movie_id == $pre_movie_id && $datetime == $pre_datetime){
@@ -292,7 +292,7 @@ class model {
 
     }
     $sql = substr($sql , 0 , -2);
-    $this->print_stuf($sql);
+    // $this->print_stuf($sql);
     exit();
    }
 
@@ -305,7 +305,7 @@ class model {
     foreach ($arr as $key => $value) {
         $sql .= "'$value'), (";
     };
-    $this->print_stuf($sql);
+    // $this->print_stuf($sql);
     }
 }
 

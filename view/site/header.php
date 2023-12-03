@@ -146,13 +146,13 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#0">blog</a>
+                        <a href="#0">🛒</a>
                         <ul class="submenu">
                             <li>
-                                <a href="blog.html">Blog</a>
+                                <a href="user-movies">MOVIES</a>
                             </li>
                             <li>
-                                <a href="blog-details.html">Blog Single</a>
+                                <a href="user-events">EVENTS</a>
                             </li>
                         </ul>
                     </li>

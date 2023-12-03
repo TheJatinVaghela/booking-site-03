@@ -8,21 +8,16 @@ class controller extends model{
     public $movie_id;
    public function __construct() {
     parent::__construct();
-    
-    switch ($_SERVER["PATH_INFO"]) {
+    $path = (isset($_SERVER["PATH_INFO"]))? $_SERVER["PATH_INFO"] : "/home";
+    switch ($path) {
         case '/home':{
+
             $this->site_header_footer("view/site/home.php");
             break;
         }
         case '/sign-in':{
             if(isset($_REQUEST["sign_in"])){
-                $answer = $this->get_user("account",$_REQUEST["user_email"],"user_email");
-                if($answer == false){
-                    echo "Please enter valid information";
-                }else{
-                    setcookie("user_id", $answer["user_id"], time() + (86400 * 30), "/"); // 86400 = 1 day
-                    header("Location:home");
-                }
+                $this->chack_user_real($_REQUEST["user_email"],"user_email","home");
             }
             $this->site_header_footer("view/site/sign-in.php");
             break;
@@ -33,11 +28,7 @@ class controller extends model{
                     $data = ["user_name"=>$_REQUEST["user_name"],"user_email"=>$_REQUEST["user_email"],"user_password"=>$_REQUEST["user_pass"]];
                     $answer = $this->add_user("account",$data,"user_email");
                     if($answer == true){
-                        $answer = $this->get_user("account",$_REQUEST["user_email"],"user_email");
-                        if($answer !== false){
-                            setcookie("user_id", $answer["user_id"], time() + (86400 * 30), "/"); // 86400 = 1 day
-                            header("Location:home");
-                        }
+                       $this->chack_user_real($_REQUEST["user_email"],"user_email","home");
                     }else{
                         $this->print_stuf("ERROR: 404");
                     }
@@ -137,14 +128,41 @@ class controller extends model{
             $this->site_header_footer("view/site/movie-seats.php");
             break;
         }
+        case "/user-movies":{
+            $this->chack_user_real($_COOKIE["user_id"],"user_id");
+            // $this->print_stuf($this->user_info);
+            $this->site_header_footer("view/site/user-movies.php");
+            break;
+        }
+        case "/user-events":{
+            $this->chack_user_real($_COOKIE["user_id"],"user_id");
+            // $this->print_stuf($this->user_info);
+            $this->site_header_footer("view/site/user-events.php");
+            break;
+        }
 
         default:{
-            $this->site_header_footer("view/site/home.php");
+            header("Location:http://localhost/clones/booking-site-03/home");
             break;
         }
     }
    }
 
+   protected function chack_user_real($data,$key,$tranfer_location=NULL){
+    $answer = $this->get_user("account",$data,$key);
+    if($answer == false){
+        echo "Please enter valid information";
+        return false;
+    }else{
+        setcookie("user_id", $answer["user_id"], time() + (86400 * 30), "/"); // 86400 = 1 day
+        if($tranfer_location != NULL){
+            header("Location:$tranfer_location");
+        }else{
+
+             return $answer;
+        }
+    }
+   }
    protected function site_header_footer($location){
     require_once("view/site/header.php");
     require_once($location);
@@ -152,5 +170,5 @@ class controller extends model{
    }
 } 
 $obj_controller = new controller();
-$obj_controller->__construct();
+// $obj_controller->__construct();
 ?>

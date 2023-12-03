@@ -6,6 +6,7 @@ class controller extends model{
     public $seat_info;
     public $last_page;
     public $movie_id;
+    public $movie_info_controller;
    public function __construct() {
     parent::__construct();
     $path = (isset($_SERVER["PATH_INFO"]))? $_SERVER["PATH_INFO"] : "/home";
@@ -130,7 +131,31 @@ class controller extends model{
         }
         case "/user-movies":{
             $this->chack_user_real($_COOKIE["user_id"],"user_id");
-            // $this->print_stuf($this->user_info);
+            $booked_info =  explode("),",$this->user_info["bookedseat"]);
+            $this->movie_info_controller = array();
+            array_pop($booked_info);
+
+            foreach ($booked_info as $key => $value) {
+                $booked_info[$key] = ltrim($value,"(");
+                $booked_info[$key] = explode(",",$value);
+                $booked_info[$key][0] = ltrim($booked_info[$key][0],"(");
+                array_push($this->movie_info_controller,$this->get_user("movie_list",$booked_info[$key][0],"movie_id"));
+                $this->movie_info_controller[$key]["dates"] = explode("/",$this->movie_info_controller[$key]["dates"]);
+                $this->movie_info_controller[$key]["dates"][0] = ltrim($this->movie_info_controller[$key]["dates"][0],"(");
+                array_pop($this->movie_info_controller[$key]["dates"]);
+                $date_num = $booked_info[$key][1];
+                $movie_date = $this->movie_info_controller[$key]["dates"][$date_num];
+                $this->movie_info_controller[$key]["dates"] = null;
+                $this->movie_info_controller[$key]["dates"] = $movie_date;
+                $seats = explode("chacked_seats=>[",rtrim($booked_info[$key][2],"]"));
+                array_shift($seats);
+                $seats = explode("/",$seats[0]);
+                array_pop($seats);
+                $this->movie_info_controller[$key]["chacked_seats"]=$seats;
+            }
+            // $this->movie_info_controller = $this->get_user("movie_list",);
+            //  $this->print_stuf($booked_info);
+            //  $this->print_stuf($this->movie_info_controller);
             $this->site_header_footer("view/site/user-movies.php");
             break;
         }

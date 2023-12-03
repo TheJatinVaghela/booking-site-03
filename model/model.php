@@ -108,8 +108,8 @@ class model {
         }
     }
 
-    protected function get_table_data($table_names_array){
-            $sql = "select * from $table_names_array";
+    protected function get_table_data($table_name){
+            $sql = "select * from $table_name";
             $sqli = $this->connection->query($sql);
             // $answer = ($sqlex->num_rows > 0)? $sqlex->fetch_all() : false;
             if($sqli->num_rows > 0){

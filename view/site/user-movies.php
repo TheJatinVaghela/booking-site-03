@@ -97,11 +97,11 @@ $seats = $this->movie_info_controller[$key]["chacked_seats"];
            return reponse.json();
         }).then((result)=> {
             console.log(result.Ans);
-             if(result.Ans === true){
-                 location.reload();
-             }else{
-                 alert("There was An Error realoed Site FOr more info");
-             }
+            //  if(result.Ans === true){
+            //     location.reload();
+            //  }else{
+            //      alert("There was An Error realoed Site FOr more info");
+            //  }
         })
     }
 </script>

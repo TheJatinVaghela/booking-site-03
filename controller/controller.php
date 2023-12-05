@@ -201,7 +201,9 @@ class controller extends model{
                 if($chack_is_no_seat[1] == "[]"){
                     // print_r("NO");
                     $booked_info[$booked_info_key_toChange] = NULL;
-                    $booked_info = implode("),",$booked_info);
+                    print_r($booked_info);
+                    exit();
+                    $booked_info = implode("",$booked_info);
                 }else{
                     $booked_info = implode("),",$booked_info);
                     $booked_info .= "),";

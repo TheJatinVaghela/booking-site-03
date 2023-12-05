@@ -36,11 +36,16 @@ $seats = $this->movie_info_controller[$key]["chacked_seats"];
                 <a href="movie-details.html"><?php echo $name?></a>
             </h5>
             <h7>Date:- <?php echo $dates?></h7> 
-            <p>Seat's:- <?php 
+            <label for="user-booked-movie<?php echo $id ;?>-seats">Seat's:- </label>
+            <select id="user-booked-movie<?php echo $id ;?>-seats" style="background: #16277d;"><?php 
                     foreach ($seats as $key => $value) {
-                        echo "[ ".$value." ]";
+                        
+                        echo "<option value=$value> $value </option>";
                     }
-                    ?></p> 
+                    ?></select> 
+            <button class="user-booked-movies" id="user-booked-movie-<?php echo $id ;?>"
+            style="background: #b02e28;"
+            onclick="deleteUserBookedSeat(<?php echo $id; ?>,this)" >remove</button>
             <ul class="movie-rating-percent">
                 <li>
                     <div class="thumb">
@@ -67,3 +72,36 @@ $seats = $this->movie_info_controller[$key]["chacked_seats"];
         </div>
     </div>
 </section>
+
+<script>
+    function deleteUserBookedSeat(id,event){
+        const selected_seat = event.previousElementSibling;
+        let date =selected_seat.previousElementSibling.previousElementSibling.innerText;
+        date = date.replace("Date:- ","");
+
+        const data ={
+            "movie_id" : id,
+            "date_time" : date,
+            "seatNum":selected_seat.value,
+            "user_id":<?php echo $this->user_info["user_id"] ;?>
+        }
+        // console.log(data);
+        fetch("http://localhost/clones/booking-site-03/removeBookedSeat", {
+            headers: {
+                "Content-Type": "application/json", // sent request
+                "Accept": "application/json" // expected data sent back
+            },
+            method: 'POST',
+            body: JSON.stringify(data)
+        }).then((reponse)=>{
+           return reponse.json();
+        }).then((result)=> {
+            console.log(result.Ans);
+             if(result.Ans === true){
+                 location.reload();
+             }else{
+                 alert("There was An Error realoed Site FOr more info");
+             }
+        })
+    }
+</script>

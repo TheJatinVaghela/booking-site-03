@@ -166,6 +166,70 @@ class controller extends model{
             break;
         }
 
+        case "/removeBookedSeat":{
+            if($_SERVER["REQUEST_METHOD"] == "POST"){
+                $data = json_decode(file_get_contents("php://input"),true);
+                $movie_info = $this->get_movie_datetime("movie_list",$data["movie_id"],"movie_id","dates");
+                if($movie_info == false){ echo "Something Went Wrong"; break;};
+                $movie_date_pos = strpos($movie_info["dates"],$data["date_time"]);
+                if($movie_date_pos === false){ echo "Date Of Movie Not Found"; break;};
+                $movie_info = ltrim($movie_info["dates"],"(");
+                $movie_info = rtrim($movie_info,")");
+                $movie_info = explode("/",$movie_info);
+                array_pop($movie_info);
+                foreach ($movie_info as $key => $value) {
+                    if($data["date_time"] == $value){
+                        $movie_info = $key;
+                        // $data["date_time"] = $key;
+                        break;
+                    }
+                };
+                $this->chack_user_real($data["user_id"],"user_id");
+                $booked_info =  explode("),",$this->user_info["bookedseat"]);
+                array_pop($booked_info); 
+                $userbooks_movie_and_date = "$data[movie_id],$movie_info";
+                $booked_info_key_toChange ="";
+                foreach ($booked_info as $key => $value) {
+                    $userbooks_movie_and_date_pos = strpos($value,"(".$userbooks_movie_and_date);
+                    if($userbooks_movie_and_date_pos === false){ echo "Date Of Movie Not Found -Ignore";}
+                    else{$booked_info_key_toChange = $key; break;};
+                };
+                // print_r($booked_info[$booked_info_key_toChange]);
+                $booked_info[$booked_info_key_toChange]=str_replace($data["seatNum"]."/","",$booked_info[$booked_info_key_toChange]);
+                $chack_is_no_seat = explode(">",$booked_info[$booked_info_key_toChange]);
+               
+                if($chack_is_no_seat[1] == "[]"){
+                    // print_r("NO");
+                    $booked_info[$booked_info_key_toChange] = NULL;
+                    $booked_info = implode("),",$booked_info);
+                }else{
+                    $booked_info = implode("),",$booked_info);
+                    $booked_info .= "),";
+                    // print_r($booked_info[$booked_info_key_toChange]."==="."[]");
+                }
+                
+
+
+                $remove_seat = $this->remove_seat("seats",$data["date_time"],$data["seatNum"]);
+                $update_user = $this->update_user("account",$data["user_id"],"bookedseat",$booked_info);
+                 if($remove_seat && $update_user == true){
+                    print_r (json_encode(["Ans"=>true]));
+                 }else{
+                    print_r (json_encode(["Ans"=>false]));
+                 }
+                //  print_r (json_encode(["Ans"=>true]));
+                // print_r($booked_info."<br>");
+                // print_r($movie_info."<br>");
+                //  print_r($remove_seat."<br>");
+                //  print_r($update_user."<br>");
+                
+                
+            }else{
+                echo "Invalid Request";
+            }
+            break;
+        }
+
         default:{
             header("Location:http://localhost/clones/booking-site-03/home");
             break;

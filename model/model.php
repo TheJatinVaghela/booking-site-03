@@ -267,6 +267,39 @@ class model {
        }
    }
 
+   protected function get_movie_datetime($table , $movie_id , $key , $select){
+    $sql = "SELECT `$select` FROM $table WHERE `$key` = '$movie_id'";
+    $sqli = $this->connection->query($sql);
+    if($sqli->num_rows > 0){
+       return $this->jatin_fetch_object($sqli);
+    }else{
+        return false;
+    } 
+   }
+
+   protected function remove_seat($table,$date_time,$seat){
+    //$data["date_time"] = '0'                  ('$data["seatNum"]')
+    // print_r("UPDATE `seats` SET `2023-09-09 09:30:00` = '1' WHERE `seat`IN ('G-5','G-6');");
+    $sql = "UPDATE `$table` SET `$date_time` = '0' WHERE `seat`IN ('$seat')";
+
+    $sqli = $this->connection->query($sql);
+    if($sqli == 1){
+        return true;
+    }else{
+        return false;
+    } 
+   }
+
+   protected function update_user($table,$id,$key,$value){
+    $sql = "UPDATE `$table` SET `$key` = '$value' WHERE `user_id` = '$id'";
+
+    $sqli = $this->connection->query($sql);
+    if($sqli == 1){
+        return true;
+    }else{
+        return false;
+    }
+   }
    private function add_all_movie_data_in_database(){
     $data = [
         ["alone",80,70,"assets/images/movie/movie01.jpg",1],

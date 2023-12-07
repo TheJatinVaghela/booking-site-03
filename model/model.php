@@ -270,7 +270,6 @@ class model {
    protected function get_movie_datetime($table , $movie_id , $key , $select){
     $sql = "SELECT `$select` FROM $table WHERE `$key` = '$movie_id'";
 
-    return ;
     $sqli = $this->connection->query($sql);
     if($sqli->num_rows > 0){
        return $this->jatin_fetch_object($sqli);
@@ -283,7 +282,7 @@ class model {
     //$data["date_time"] = '0'                  ('$data["seatNum"]')
     // print_r("UPDATE `seats` SET `2023-09-09 09:30:00` = '1' WHERE `seat`IN ('G-5','G-6');");
     $sql = "UPDATE `$table` SET `$date_time` = '0' WHERE `seat`IN ('$seat')";
-return;
+
     $sqli = $this->connection->query($sql);
     if($sqli == 1){
         return true;

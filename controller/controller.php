@@ -199,26 +199,49 @@ class controller extends model{
                 $chack_is_no_seat = explode(">",$booked_info[$booked_info_key_toChange]);
                
                 if($chack_is_no_seat[1] == "[]"){
-                    // print_r("NO");
-                    $booked_info[$booked_info_key_toChange] = NULL;
-                    print_r($booked_info);
-                    exit();
-                    $booked_info = implode("",$booked_info);
+                    // print_r($booked_info_key_toChange);
+                    //this means that the index is null so we remove it 
+                    array_splice($booked_info,$booked_info_key_toChange,1);
+                    if(isset($booked_info[0])){
+                        $first_char = substr($booked_info[0],0,1);
+                    }
+                    if($first_char == "("){
+                        // array_shift($booked_info);
+                        if(isset($booked_info[0])){
+                            $booked_info[0] = $booked_info[0].")" ;
+                        }else{
+                            $booked_info="";
+                        }
+                    }else{
+                        if(isset($booked_info[0])){
+                         $booked_info[0] = "(".$booked_info[0];
+                        }else{
+                            $booked_info="";
+                        }
+                    };
+                    if($booked_info != ""){
+                        if(count($booked_info) == 1){
+                            $booked_info = $booked_info[0].",";
+                        }
+                    }
+                    // print_r($booked_info);
                 }else{
                     $booked_info = implode("),",$booked_info);
                     $booked_info .= "),";
                     // print_r($booked_info[$booked_info_key_toChange]."==="."[]");
                 }
                 
-
+                print_r($booked_info);
 
                 $remove_seat = $this->remove_seat("seats",$data["date_time"],$data["seatNum"]);
                 $update_user = $this->update_user("account",$data["user_id"],"bookedseat",$booked_info);
-                 if($remove_seat && $update_user == true){
-                    print_r (json_encode(["Ans"=>true]));
-                 }else{
-                    print_r (json_encode(["Ans"=>false]));
-                 }
+                // print_r($update_user);
+                    $answer = ['Ans'=>true];
+                  if($remove_seat==true && $update_user == true){
+                     print_r (json_encode($answer));
+                  }else{
+                     print_r (json_encode($answer));
+                  }
                 //  print_r (json_encode(["Ans"=>true]));
                 // print_r($booked_info."<br>");
                 // print_r($movie_info."<br>");

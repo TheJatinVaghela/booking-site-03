@@ -7,6 +7,7 @@ class controller extends model{
     public $last_page;
     public $movie_id;
     public $movie_info_controller;
+    public $admin_update_movie_details = null;
    public function __construct() {
     parent::__construct();
     $path = (isset($_SERVER["PATH_INFO"]))? $_SERVER["PATH_INFO"] : "/home";
@@ -254,7 +255,137 @@ class controller extends model{
             }
             break;
         }
+        case "/admin_home":{
+            //admin_id,admin_name,admin_email,admin_password
+            if(isset($_REQUEST["movieUpdate_id"])){
+                $this->admin_update_movie_details = $this->get_user('movie_list',$_REQUEST["movie_id"],'movie_id');
+                print_r ($this->admin_update_movie_details );
+            }
+            if(isset($_REQUEST["update_movie"])){
+                $this->print_stuf($_REQUEST["olddates1"]);
+                if(isset($_REQUEST["available"])){
+                    if(isset($_REQUEST['dates']) && $_REQUEST["dates"] != ''){
+                        $_REQUEST['dates'] = str_replace('T',' ',$_REQUEST['dates']).':00';
+                    }
+                    $olddate=null;
+                    $date=null;
+                    if(isset($_REQUEST["olddateCount"]) && isset($_REQUEST["olddates0"])){
+                        for ($i=0; $i <= $_REQUEST["olddateCount"]; $i++) { 
+                            $chackiflast = (($i+1) > $_REQUEST["olddateCount"])? true : false;
+                            $answer=str_contains($_REQUEST["olddates".$i],'_delete');
+                            if($answer == true){
+                                // $this->print_stuf("no");
 
+                                $_REQUEST["olddates".$i] = null;
+                                unset($_REQUEST["olddates".$i]);
+                                if((isset($chackiflast))&& ($_REQUEST["dates"] !== '('.$_REQUEST["dates"].'/)')){
+                                    $this->print_stuf("no");
+                                    if($olddate !== null){
+                                        $olddate .= $_REQUEST["dates"].'/)'; 
+                                    }else if($olddate === null){
+
+                                        $date = '('.$_REQUEST["dates"].'/)';
+                                    }
+                                }
+                            }else{
+                                $this->print_stuf("yes");
+                                
+                                if($olddate === null){
+                                    if($chackiflast == true){
+                                        var_dump( $chackiflast );
+                                        echo "fiart";
+                                        $olddate = '('.$_REQUEST["olddates".$i].'/'.$_REQUEST["dates"].'/)';
+                                        unset($_REQUEST["olddates".$i]);
+                                    }else{
+                                        $olddate = '('.$_REQUEST["olddates".$i].'/';
+                                    }
+                                }else{
+                                    if($chackiflast == true){
+                                        var_dump( $chackiflast );
+                                        echo "second";
+                                       $olddate .= (isset($_REQUEST['dates']) && $_REQUEST["dates"] != '')?
+                                         $_REQUEST["olddates".$i].'/'.$_REQUEST['dates'].'/)':
+                                         $_REQUEST["olddates".$i].'/)';
+                                        // $_REQUEST["dates"] = $olddate;
+                                        unset($_REQUEST["olddates".$i]);
+
+                                    }else{
+                                        $olddate .= $_REQUEST["olddates".$i].'/';
+                                        unset($_REQUEST["olddates".$i]);
+                                    }
+                                }
+                            }
+                        }
+                        unset($_REQUEST["olddateCount"]);
+                    };
+                     if($olddate == null || $olddate == ''){
+                         $olddate = '('.$_REQUEST["dates"].'/)';
+                         $_REQUEST["dates"] = $olddate;
+                     }else if($olddate != null || $olddate != ''){
+                        $_REQUEST["dates"] = $olddate;
+                     }
+                    // echo "date :";
+                    // $this->print_stuf($date); //null //one //null//one
+                    // echo "olddate :";
+                    // $this->print_stuf($olddate);//three //two // two//null
+                    echo "request :";
+                    $this->print_stuf($_REQUEST["dates"]);
+                    $target_dir = "assets/images/movie/";
+                    $target_file = $target_dir . basename($_FILES["movie_img"]["name"]);
+                    $uploadOk = 1;
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                    // Check if image file is a actual image or fake image
+                    $check = getimagesize($_FILES["movie_img"]["tmp_name"]);
+                    if ($check !== false) {
+                        $uploadOk = 1;
+                    } else {
+                        echo "File is not an image.";
+                        $uploadOk = 0;
+                    }
+
+                    // Allow certain file formats
+                    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                        $uploadOk = 0;
+                    }
+
+                    // Check if $uploadOk is set to 0 by an error
+                    if ($uploadOk == 0) {
+                        echo "Sorry, your file was not uploaded.";
+                    } else {
+                        // If everything is ok, try to upload file
+                        if (move_uploaded_file($_FILES["movie_img"]["tmp_name"], $target_file)) {
+
+                            // Insert into database
+                            $imagePath = $target_file;
+                            array_pop($_REQUEST);
+                            $this->print_stuf(array_merge($_REQUEST,["movie_img"=>$imagePath]));
+                            $answer = $this->update_movie_ADMIN('movie_list',$_REQUEST['movie_id'],'movie_id',$_REQUEST);
+                            $this->print_stuf($answer);
+                        } else {
+                            echo "Sorry, there was an error uploading your file.";
+                        }
+                    }
+                }
+                
+            }
+            $this->user_info = $this->get_user('admin_table',$_COOKIE["admin_user_id"],'admin_id');
+            if($this->user_info !== false){
+                $this->admin_site_header_footer('view/admin/home.php');
+                break;
+            }else{
+                echo "<h1> First Do <a href='http://localhost/clones/booking-site-03/admin_sign_in'>ADMIN Log IN</a> Then Come </h1>";
+                break;
+            }
+        }
+        case "/admin_sign_in":{
+            if(isset($_REQUEST["admin_sign_in"])){
+                $this->adminchack_user_real($_REQUEST["admin_email"],"admin_email","admin_home");
+            }
+            $this->admin_site_header_footer('view/admin/sign-in.php');
+            break;
+        }
         default:{
             header("Location:http://localhost/clones/booking-site-03/home");
             break;
@@ -277,10 +408,30 @@ class controller extends model{
         }
     }
    }
+   protected function adminchack_user_real($data,$key,$tranfer_location=NULL){
+    $answer = $this->get_user("admin_table",$data,$key);
+    if($answer == false){
+        echo "Please enter valid information";
+        return false;
+    }else{
+        setcookie("admin_user_id", $answer["admin_id"], time() + (86400 * 30), "/"); // 86400 = 1 day
+        if($tranfer_location != NULL){
+            header("Location:$tranfer_location");
+        }else{
+            header("Location:http://localhost/clones/booking-site-03/admin_home");
+            //  return $answer;
+        }
+    }
+   }
    protected function site_header_footer($location){
     require_once("view/site/header.php");
     require_once($location);
     require_once("view/site/footer.php");
+   }
+   protected function admin_site_header_footer($location){
+    require_once("view/admin/header.php");
+    require_once($location);
+    require_once("view/admin/footer.php");
    }
 } 
 $obj_controller = new controller();

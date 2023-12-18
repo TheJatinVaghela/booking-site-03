@@ -31,7 +31,7 @@ class model {
     }
 
     protected function print_stuf($stuf){
-        echo"<pre>";
+        echo"<pre style='color:white;'>";
         print_r($stuf);
         echo"</pre>";
     }
@@ -289,6 +289,35 @@ class model {
     }else{
         return false;
     } 
+   }
+
+   protected function update_movie_ADMIN($table,$data,$key,$Arraydata){
+    /* 
+    UPDATE `movie_list` SET `movie_name` = 'alon', `movie_tomato_rating` = '90',
+    `movie_box_office_rating` = '90', `movie_img` = 'assets/images/movie/movie02.jpg',
+    `dates` = '(2023-09-09 09:30:00/2023-09-10 12:30:00/2023-012-10 04:30:00/)'
+    WHERE `movie_list`.`movie_id` = 1; 
+    */  array_shift($Arraydata);
+        $sql = "UPDATE `$table` SET ";
+        foreach ($Arraydata as $keys => $value) {
+            $sql.= "`$keys` = `$value`, ";
+        }
+        $sql .= "WHERE `$key` = `$data`";
+
+        // $sqli = $this->connection->query($sql);
+        // if($sqli == 1){
+        //     return true;
+        // }else{
+            return $sql;
+        // }
+        
+        /*
+        UPDATE `movie_list` SET `movie_name` = `alon`, `movie_tomato_rating` = `90`,
+        `movie_box_office_rating` = `90`, `available` = `1`,
+        `dates` = `(2023-09-09 09:30:00/2023-12-19 04:56:00/)`,
+         WHERE `movie_list`.`movie_id` = `1`
+        */
+
    }
 
    protected function update_user($table,$id,$key,$value){
